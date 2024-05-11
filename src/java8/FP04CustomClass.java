@@ -1,8 +1,11 @@
 package java8;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 class Course{
     private String name;
@@ -227,5 +230,33 @@ public class FP04CustomClass {
         System.out.println(
                 courses.stream()
                         .collect(Collectors.groupingBy(Course::getCategory, Collectors.mapping(Course::getName, Collectors.toList()))));
+
+
+        Stream.of(12, 9, 13, 4, 5).count();
+
+        Stream.of(12, 9, 13, 4, 5).reduce(0, Integer::sum);
+
+        // The above are referencePipeline which means they use wrapper classes
+
+        //streams with primitive values below
+
+        int[] numberArray={12, 9, 13, 4, 5};
+        Arrays.stream(numberArray); //this would be a IntPipeline basically primitive values
+
+        Arrays.stream(numberArray).sum();
+        Arrays.stream(numberArray).average();
+        Arrays.stream(numberArray).min();
+        Arrays.stream(numberArray).max();
+
+
+        //Easier way to create stream
+
+        IntStream.range(1,10).sum();  //10 not included so if you want to include 10 you can do that using rangeClosed
+
+        IntStream.iterate(1, e->e +2).limit(10).sum();
+
+        IntStream.iterate(1, e->e +2).limit(10).peek(System.out::println).sum();
+
+
     }
 }

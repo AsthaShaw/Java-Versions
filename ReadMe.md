@@ -14,6 +14,651 @@ Java 16- Record Classes
 
 All Java Versions-API Improvements, Garbage Collection Improvements and Performance
 
+Java 8
+
+Implementation of
+
+- forEach
+- filter
+- contains
+- Method Reference
+- map
+
+```jsx
+
+public class FP01 {
+
+    public static void main(String[] args) {
+        printAllNumbersInList(List.of(12,9,13,4,6,2,4, 12,15));
+
+        List<String> courses=List.of("Spring", "Spring Boot", "API", "Microservices", "AWS", "PCF", "Azure", "Docker", "Kubernetes");
+        printCourses(courses);
+    }
+
+    private static void printCourses(List<String> courses) {
+
+        System.out.println("------PRINT COURSES WITH SPRING IN THAT------");
+        courses.stream().filter(course->course.contains("Spring")).forEach(System.out::println);
+
+        System.out.println("------PRINT COURSE NAMES WITH ATLEAST 4 LETTERS-----");
+        courses.stream().filter(course->course.length()>=4).forEach(System.out::println);
+
+        System.out.println("------PRINT COURSE NAMES WITH NUMBER OF CHARACTERS-----");
+        courses.stream().map(course->course+" "+course.length()).forEach(System.out::println);
+
+    }
+
+    private static boolean isEven(int number){
+        return number%2==0;
+    }
+
+    private static void printAllNumbersInList(List<Integer> numbers) {
+
+        //Traditional way to loop
+        for(int number:numbers){
+            System.out.println(number);
+        }
+
+        //Functional way-focuses on what needs to be done
+        numbers.forEach(number-> System.out.println(number));
+
+        //Method reference-calls a method in a class
+        System.out.println("-----FOR EACH------");
+        numbers.forEach(System.out::println);
+
+        //Print even numbers in the list
+        //Lambda expression is nothing but a method, basically a nameless method
+        System.out.println("-----PRINT EVEN NUMBERS------");
+        numbers.stream().filter(x->x%2==0).forEach(System.out::println);
+
+        System.out.println("----PRINT EVEN NUMBERS ANOTHER WAY-----");
+        numbers.stream().filter(FP01::isEven).forEach(System.out::println);
+
+        System.out.println("-----PRINT SQUARES OF EVEN NUMBERS------");
+        numbers.stream()
+                .filter(x->x%2==0)
+                .map(x->x*x)
+                .forEach(System.out::println);
+
+        System.out.println("-----PRINT ODD NUMBERS------");
+        numbers.stream().filter(x->x%2!=0).forEach(System.out::println);
+
+        System.out.println("-----PRINT CUBES OF ODD NUMBERS------");
+        numbers.stream().filter(x->x%2!=0).map(x->x*x*x).forEach(System.out::println);
+
+        System.out.println("----PRINT ODD NUMBERS ANOTHER WAY-----");
+        numbers.stream().filter(Predicate.not(FP01::isEven)).forEach(System.out::println);
+    }
+
+```
+
+Implementation of
+
+- collect
+- reduce
+- distinct
+- sorted
+- comparator
+
+```jsx
+
+public class FP02 {
+
+    public static void main(String[] args) {
+
+        List<Integer> numbers=List.of(12,9,13, 4, 6, 2, 4, 12, 15);
+        //list of numbers combine them into a single result-reducer
+        System.out.println(addListFunctional(numbers));
+        System.out.println("Square And Sum of Numbers::"+squareAndSum(numbers));
+        System.out.println(findSumOfOddNumbers(numbers));
+        distinct(numbers);
+        sorted(numbers);
+
+        List<String> courses=List.of("Spring", "Spring Boot", "API", "Microservices", "AWS", "PCF", "Azure", "Docker", "Kubernetes");
+
+        reverseSorting(courses);
+
+        //Adding a list of numbers to another datastructures-collect
+        List<Integer> doubledNumbers=doubleList(numbers);
+        System.out.println(doubledNumbers);
+
+        //Exercises of collectors
+        List<Integer> evenNumberList=evenNumberCollect(numbers);
+        System.out.println(evenNumberList);
+
+        List<Integer> lengthOfCourseTitles=listOfCourseTitleLengthCollect(courses);
+        System.out.println(lengthOfCourseTitles);
+
+    }
+
+    private static List<Integer> listOfCourseTitleLengthCollect(List<String> courses) {
+        return courses.stream().map(course->course.length()).collect(Collectors.toList());
+    }
+
+    private static List<Integer> evenNumberCollect(List<Integer> numbers) {
+        return numbers.stream().filter(number->number%2==0).collect(Collectors.toList());
+    }
+
+    private static List<Integer> doubleList(List<Integer> numbers) {
+
+        return numbers.stream().map(number->number*number).collect(Collectors.toList());
+    }
+
+    private static void reverseSorting(List<String> courses) {
+        //sorting
+        courses.stream()
+                .sorted(Comparator.naturalOrder())
+                .forEach(System.out::println);
+
+        //reverse sorting
+        courses.stream().sorted(Comparator.reverseOrder()).forEach(System.out::println);
+
+        //define your own comparator eg: compare by length of string
+        courses.stream().sorted(Comparator.comparing(str->str.length()
+        )).forEach(System.out::println);
+    }
+
+    private static int addListFunctional(List<Integer> numbers){
+      // return numbers.stream().reduce(0, FP02::sum);
+      //  return numbers.stream().reduce(0,(x,y)->x+y);
+        return numbers.stream().reduce(0,Integer::sum);
+
+       // return numbers.stream().reduce(Integer.MIN_VALUE,(x,y) -> x>y? x:y);
+
+        //Square
+    }
+
+    private static int squareAndSum(List<Integer> numbers){
+        BinaryOperator<Integer> sumBinaryOperator = Integer::sum;
+
+        //Functional interfaces are Anonymous classes
+        //Function descriptor
+
+        BinaryOperator<Integer> sumBinaryOperator2=new BinaryOperator<Integer>() {
+            @Override
+            public Integer apply(Integer a, Integer b) {
+                return a + b;
+            }
+        };
+
+        return numbers.stream().map(number->number* number).reduce(0, sumBinaryOperator );
+    }
+
+    private static int findSumOfOddNumbers(List<Integer> numbers){
+        return numbers.stream().filter(number->number%2!=0).reduce(0, Integer::sum);
+    }
+
+    private static int sum(int a, int b){
+        System.out.println(a+" "+b);
+        //a is the aggregate and b is the nextNumber, we are doing aggregation here. That's how a reduce number works
+        return a+b;
+    }
+
+    private static void distinct(List<Integer> numbers){
+        //distinct()
+         numbers.stream().distinct().forEach(System.out::println);
+
+    }
+
+    private static void sorted(List<Integer> numbers){
+        //sorted
+        //numbers.stream().sorted().forEach(System.out::println);
+
+        //distinct and sorted
+        numbers.stream()
+                .distinct() //Stream<T> Intermediate-operates on a stream and returns a stream
+                .sorted() //Stream<T>
+                .forEach(System.out::println);// void //Terminal operation-converts a stream into something else other than stream
+    }
+
+}
+```
+
+Functional Interfaces-These interfaces just have one abstract method
+
+Implementation of Functional Interfaces
+
+1. **`Predicate<T>`**
+- **A predicate** is a function that evaluates whether a given condition is **true** or **false**. Essentially, it’s a function that takes a set of parameters and returns a boolean value.
+- Represents a boolean-valued function (predicate) of one argument of type **`T`**.
+- Used for filtering or testing conditions.
+- Example: Checking if a number is even using **`Predicate<Integer>`**.
+
+1. **`Function<T, R>`**:
+   - Represents a function that accepts one argument of type **`T`** and produces a result of type **`R`**.
+   - Commonly used for mapping or transforming data.
+   - Example: Converting a list of strings to uppercase using **`Function<String, String>`**.
+
+2. **`Consumer<T>`**:
+   - Represents an operation that accepts a single input argument of type **`T`** and returns no result.
+   - Used for side-effect operations (e.g., printing, logging).
+   - Example: Printing each element of a list using **`Consumer<String>`**.
+
+
+```jsx
+
+public class FP03FunctionalInterfaces {
+
+    public static void main(String[] args) {
+
+        List<Integer> numbers = List.of(12, 9, 13, 4, 6, 2, 4, 12, 15);
+
+        /*
+        so the lambda simplifies the below method
+
+        boolean isEven(int x){
+        return x%2==0;
+        }
+         */
+
+        //Predicate, Consumer, Function are all functional interface which means they have just one abstract method
+
+        Predicate<Integer> isEvenPredicate = x -> x % 2 == 0;//Instance of a predicate class created
+
+        Predicate<Integer> isEvenPredicate2= new Predicate<Integer>() {
+            @Override
+            public boolean test(Integer x) {
+                return x%2==0;
+            }
+        };
+
+        Function<Integer, Integer> squareFunction = x -> x * x;//Instance of function class created
+
+        Function<Integer, Integer> squareFunction2=new Function<Integer, Integer>() {
+            @Override
+            public Integer apply(Integer x) {
+                return x*x;
+            }
+        };
+
+        Consumer<Integer> sysOutConsumer = System.out::println;//Instance of consumer class created
+
+        Consumer<Integer> sysOutConsumer2=new Consumer<Integer>() {
+            @Override
+            public void accept(Integer x) {
+                System.out.println(x);
+            }
+        };
+
+        numbers.stream()
+                .filter(isEvenPredicate)
+                .map(squareFunction)
+                .forEach(sysOutConsumer);
+```
+
+1. BiPredicate
+
+```jsx
+  BiPredicate<Integer, String> biPredicate=(number,str)->{
+            return number<10 && str.length()>5;
+        };
+
+        System.out.println(biPredicate.test(15, "in28minutes"));
+```
+
+1. BiConsumer-Takes 2 inputs
+
+```jsx
+  BiConsumer<Integer, String> biConsumer=(s1,s2)->{
+            System.out.println(s1);
+            System.out.println(s2);
+        };
+
+        biConsumer.accept(25, "in28minutes" );
+```
+
+1. BiFunction-Specify the output type
+
+```jsx
+ BiFunction<Integer, String, String> biFunction=(number, str) ->{
+            return number+ " "+str;
+        };
+
+        System.out.println(biFunction.apply(15, "in28minutes"));
+```
+
+1. Supplier-
+- represents a supplier of a value of type **`T`**.
+- Used for lazy evaluation or generating values.
+- Example: Generating random numbers using **`Supplier<Double>`**
+
+```jsx
+
+  Supplier<Integer> randomIntegerSupplier=()->{
+            Random random=new Random();
+            return random.nextInt(1000);
+        };
+        System.out.println(randomIntegerSupplier.get());
+```
+
+- UnaryOperator-`Unary operator takes an argument of one type and returns the output of same type`
+
+```jsx
+
+UnaryOperator<Integer> unaryOperator=(x)->3 * x;
+
+        System.out.println(unaryOperator.apply(10));
+```
+
+`If you want to use lambdas with primitives then below can be used so you do not need to do autoboxing and unboxing`
+
+- IntBinaryOperator
+- IntConsumer
+- IntFunction
+- IntPredicate
+- IntSupplier
+- IntToDoubleFunction
+- IntToLongFunction
+
+Implementation of Behaviour Parametrization-When you pass behaviour as a function argument
+
+```jsx
+
+public class FP03BehaviourParameterization {
+
+    public static void main(String[] args) {
+        List<Integer> numbers = List.of(12, 9, 13, 4, 6, 2, 4, 12, 15);
+
+       // Predicate<Integer> evenPredicate = x -> x % 2 == 0;
+
+        filterAndPrint(numbers, x -> x % 2 == 0);
+
+      //  Predicate<Integer> oddPredicate = x -> x % 2 != 0;
+
+        // Below we are passing the behaviour as a parameter
+        filterAndPrint(numbers, x -> x % 2 != 0);
+
+       // Function<Integer, Integer> squareOfIntegers = number -> number * number;
+       
+       List<Integer> doubledNumbers = mapAndcollectToList(numbers,number -> number * number);
+       List<Integer> cubedNumbers = mapAndcollectToList(numbers,number -> number * number * number);
+
+        System.out.println(doubledNumbers);
+        System.out.println(cubedNumbers);
+
+    }
+
+    private static List<Integer> mapAndcollectToList(List<Integer> numbers, Function<Integer, Integer> mappingFunction) {
+       return numbers.stream().map(mappingFunction).collect(Collectors.toList());
+    }
+
+    private static void filterAndPrint(List<Integer> numbers, Predicate<Integer> oddPredicate) {
+        numbers.stream()
+                .filter(oddPredicate)
+                .forEach(System.out::println);
+    }
+}
+
+```
+
+Implementation of Custom Classes
+
+- allMatch
+- noneMatch
+- anyMatch
+
+```jsx
+
+public class FP04CustomClass {
+
+    public static void main(String[] args) {
+        List<Course> courses=List.of(
+                new Course("Spring", "Framework", 98, 20000),
+                new Course("Spring Boot", "Framework", 98, 18000),
+                new Course("API", "Microservices", 97, 20000),
+                new Course("Microservices", "Microservices", 96, 25000),
+                new Course("FullStack", "FullStack", 91, 14000),
+                new Course("AWS", "Cloud", 92, 21000),
+                new Course("Azure", "Cloud", 99, 21000),
+                new Course("Docker","Cloud", 92, 20000),
+                new Course("Kubernetes", "Cloud", 91, 20000)
+
+        );
+
+        //allMatch, noneMatch, anyMatch
+
+        System.out.println(courses.stream().allMatch(course->course.getReviewScore()>95));
+
+        System.out.println(courses.stream().noneMatch(course->course.getReviewScore()<90));
+
+        System.out.println(courses.stream().anyMatch(course->course.getReviewScore()<90));
+
+        
+```
+
+- Comparator Usage
+
+```jsx
+
+ //sorted using comparator
+        //comparing by number of students
+        Comparator<Course> comparingByNoOfStudentsIncreasing= Comparator.comparing((Course::getNoOfStudents));
+        Comparator<Course> comparingByNoOfStudentsDecreasing= Comparator.comparing((Course::getNoOfStudents)).reversed();
+
+        System.out.println(courses.stream()
+                .sorted(comparingByNoOfStudentsIncreasing)
+                .collect(Collectors.toList()));
+
+        System.out.println(courses.stream()
+                .sorted(comparingByNoOfStudentsDecreasing)
+                .collect(Collectors.toList()));
+
+      //comparing by number of reviews and number of students
+        Comparator<Course> comparingByNoOfStudentsAndNoOfReviews= Comparator.comparingInt((Course::getNoOfStudents))
+                .thenComparingInt(Course::getReviewScore).reversed();
+
+//you can use comparingInt or thencomparingInt as that is more efficient than comparing as boxing and unboxing is not involved
+        System.out.println(courses.stream()
+                .sorted(comparingByNoOfStudentsAndNoOfReviews)
+                .collect(Collectors.toList()));
+
+```
+
+Implementation of further custom classes
+
+- skip
+- limit
+- takeWhile
+- dropWhile
+
+```jsx
+
+ //limit-pick up till some results
+        System.out.println(courses.stream()
+                .sorted(comparingByNoOfStudentsAndNoOfReviews)
+                        .limit(5)
+                .collect(Collectors.toList()));
+
+        //skip-skip first few courses
+        System.out.println(courses.stream()
+                .sorted(comparingByNoOfStudentsAndNoOfReviews)
+                .skip(2)
+                .collect(Collectors.toList()));
+
+//skip 3 and get rest 5
+        System.out.println(courses.stream()
+                .sorted(comparingByNoOfStudentsAndNoOfReviews)
+                .skip(2)
+                .limit(5)
+                .collect(Collectors.toList()));
+
+        //takeWhile-loop through till it meets the criteria
+
+        System.out.println(courses.stream().
+                takeWhile(course->course.getReviewScore()>=95)
+                .collect(Collectors.toList()));
+
+        //dropWhile-opposite of takewhile. It will keep dropping the elements that meet the criteria
+
+        System.out.println(courses.stream().
+                dropWhile(course->course.getReviewScore()>=95)
+                .collect(Collectors.toList()));
+```
+
+Implementation of further custom classes
+
+- top
+- max
+- min
+- findFirst
+- findAny
+
+```jsx
+
+//max-returns the last element in the list
+        System.out.println(courses.stream()
+                .max(comparingByNoOfStudentsAndNoOfReviews));
+
+        //min-returns the first element in the list
+        System.out.println(courses.stream()
+                .min(comparingByNoOfStudentsAndNoOfReviews));
+
+        //Below will give Optional.empty instead of a null
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()<90)
+                .min(comparingByNoOfStudentsAndNoOfReviews));
+
+        //Optional-helps to specify a default value
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()<90)
+                .min(comparingByNoOfStudentsAndNoOfReviews)
+                .orElse(new Course("Kubernetes", "Cloud", 91, 20000)));
+
+        //findFirst-finds the first element that meets the criteria
+
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()<90)
+                .findFirst());
+
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()>90)
+                .findFirst());
+
+        //findAny-returns any of the value from the list and which value that is nondeterministic
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()>90)
+                .findAny());
+```
+
+Implementation of further custom classes
+
+- sum
+- average
+- count
+
+```jsx
+
+ //sum, average and count
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()>90)
+                .mapToInt(Course::getNoOfStudents) //you can also use map
+                .sum());
+
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()>90)
+                .mapToInt(Course::getNoOfStudents) //you can also use map
+                .average());
+//count the number of students that meet the criteria
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()>95)
+                .mapToInt(Course::getNoOfStudents) //you can also use map
+                .count());
+//max
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()>95)
+                .mapToInt(Course::getNoOfStudents) //you can also use map
+                .max());
+
+        //min
+        System.out.println(courses.stream()
+                .filter(course->course.getReviewScore()>95)
+                .mapToInt(Course::getNoOfStudents) //you can also use map
+                .min());
+```
+
+Implementation of grouping in streams
+
+```jsx
+
+ //grouping
+        System.out.println(
+        courses.stream()
+                .collect(Collectors.groupingBy(Course::getCategory)));
+
+        //count the number of groups
+        System.out.println(
+                courses.stream()
+                        .collect(Collectors.groupingBy(Course::getCategory, Collectors.counting())));
+
+        //highest review score from the group
+        System.out.println(
+                courses.stream()
+                        .collect(Collectors.groupingBy(Course::getCategory, Collectors.maxBy(Comparator.comparing(Course :: getReviewScore)))));
+
+        //map just with names of the course
+
+        System.out.println(
+                courses.stream()
+                        .collect(Collectors.groupingBy(Course::getCategory, Collectors.mapping(Course::getName, Collectors.toList()))));
+
+```
+
+Implementation of
+
+- Stream.of
+- Streams with primitive values using Arrays.stream()
+- Easier way to create stream
+
+```jsx
+
+Stream.of(12, 9, 13, 4, 5).count();
+
+        Stream.of(12, 9, 13, 4, 5).reduce(0, Integer::sum);
+
+        // The above are referencePipeline which means they use wrapper classes
+
+        //streams with primitive values below
+
+        int[] numberArray={12, 9, 13, 4, 5};
+        Arrays.stream(numberArray); //this would be a IntPipeline basically primitive values
+
+        Arrays.stream(numberArray).sum();
+        Arrays.stream(numberArray).average();
+        Arrays.stream(numberArray).min();
+        Arrays.stream(numberArray).max();
+
+        //Easier way to create stream
+
+        IntStream.range(1,10).sum();  //10 not included so if you want to include 10 you can do that using rangeClosed
+
+        IntStream.iterate(1, e->e +2).limit(10).sum();
+
+        IntStream.iterate(1, e->e +2).limit(10).peek(System.out::println).sum();
+```
+
+Implementation of some method reference usage
+
+```jsx
+ public class PuzzlesFP {
+
+    public static void main(String[] args) {
+        List<String> courses=List.of("Spring", "Spring Boot", "API", "Microservices", "AWS", "PCF", "Azure", "Docker", "Kubernetes");
+
+        //Method references work for both static and not static methods
+        courses.stream()
+            //    .map(str->str.toUpperCase())
+                .map(String::toUpperCase)
+                .forEach(System.out::println);
+
+        Supplier<String> supplier=()->new String();
+        //The above can be written as a constructor reference
+        Supplier<String> supplier2=String::new;
+
+    }
+}
+```
+
+
 Java 9
 
 `Static Map in Java-A static map is a map which is defined as static. It means that the map becomes a class member and can be easily used using class.`
