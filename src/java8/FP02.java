@@ -3,6 +3,7 @@ package java8;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class FP02 {
@@ -32,6 +33,11 @@ public class FP02 {
         List<Integer> lengthOfCourseTitles=listOfCourseTitleLengthCollect(courses);
         System.out.println(lengthOfCourseTitles);
 
+        System.out.println("----------REDUCE------");
+        System.out.println(squareAndSum(numbers));
+        System.out.println("-----MAP-----");
+        squareAndSum1(numbers);
+
 
     }
 
@@ -51,7 +57,10 @@ public class FP02 {
 
 
     private static void reverseSorting(List<String> courses) {
+        System.out.println("NATURAL ORDER 1");
+        courses.stream().sorted().forEach(System.out::println);
         //sorting
+        System.out.println("NATURAL ORDER 2");
         courses.stream()
                 .sorted(Comparator.naturalOrder())
                 .forEach(System.out::println);
@@ -90,6 +99,22 @@ public class FP02 {
         return numbers.stream().map(number->number* number).reduce(0, sumBinaryOperator );
     }
 
+    private static void squareAndSum1(List<Integer> numbers){
+        BinaryOperator<Integer> sumBinaryOperator = Integer::sum;
+
+        //Functional interfaces are Anonymous classes
+        //Function descriptor
+
+        BinaryOperator<Integer> sumBinaryOperator2=new BinaryOperator<Integer>() {
+            @Override
+            public Integer apply(Integer a, Integer b) {
+                return a + b;
+            }
+        };
+
+         numbers.stream().map(number->number+number).forEach(System.out::println);
+    }
+
     private static int findSumOfOddNumbers(List<Integer> numbers){
         return numbers.stream().filter(number->number%2!=0).reduce(0, Integer::sum);
     }
@@ -103,6 +128,7 @@ public class FP02 {
     private static void distinct(List<Integer> numbers){
         //distinct()
          numbers.stream().distinct().forEach(System.out::println);
+
 
 
     }
