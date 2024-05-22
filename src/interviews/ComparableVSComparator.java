@@ -32,17 +32,19 @@ public class ComparableVSComparator {
         nums1.add(87);
 
         //Comparator is an interface using which you can use your own logic for sorting
-        Comparator<Integer> com=new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                if (o1 % 10 > o2 % 10) {
-                    return 1;
-                } else {
-                    return -1;
-                }
+//        Comparator<Integer> com=new Comparator<Integer>() {
+//            @Override
+//            public int compare(Integer o1, Integer o2) {
+//                if (o1 % 10 > o2 % 10) {
+//                    return 1;
+//                } else {
+//                    return -1;
+//                }
+//
+//            }
+//        };
 
-            }
-        };
+        Comparator<Integer> com= (o1, o2) -> (o1 % 10 > o2 % 10)?1:-1;
 
         Collections.sort(nums1,com);
         System.out.println(nums1);
@@ -60,17 +62,19 @@ public class ComparableVSComparator {
         }
         //Not accepting
        // Collections.sort(students);
-        Comparator<Student> comStudent=new Comparator<Student>() {
-            @Override
-            public int compare(Student o1, Student o2) {
-                if (o1.age > o2.age) {
-                    return 1;
-                } else {
-                    return -1;
-                }
+//        Comparator<Student> comStudent=new Comparator<Student>() {
+//            @Override
+//            public int compare(Student o1, Student o2) {
+//                if (o1.age > o2.age) {
+//                    return 1;
+//                } else {
+//                    return -1;
+//                }
+//
+//            }
+//        };
 
-            }
-        };
+        Comparator<Student> comStudent= (o1, o2) -> (o1.age > o2.age)?1:-1;
 
         Collections.sort(students,comStudent);
         System.out.println(students);
