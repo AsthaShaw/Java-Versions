@@ -960,3 +960,18 @@ public class RecordsRunner {
         System.out.println(str);
     }
 ```
+
+# Interviews
+
+Sealed classes
+
+- If a parent is sealed class then the child which is permitted has to be a sealed or final class or non-sealed
+
+In summary:
+
+- **Regular (Non-Sealed) Classes**: Open for extension by any class.
+- **Sealed Classes**: Specify a closed set of permitted subclasses.
+- **Non-Sealed Classes**: Open for extension but can break the seal for further subclasses.
+
+- **`Comparable`**: Natural ordering within the class. Implement it when the sorting behavior is intrinsic to the class.
+- **`Comparator`**: External ordering behavior. Use it when you need custom sorting criteria or want to override the default ordering.
