@@ -961,6 +961,7 @@ public class RecordsRunner {
     }
 ```
 
+# Important Interview Topics
 ### Sealed classes
 
 - If a parent is sealed class then the child which is permitted has to be a sealed or final class or non-sealed
@@ -972,6 +973,8 @@ In summary:
 - **Non-Sealed Classes**: Open for extension but can break the seal for further subclasses.
 
 ### Comparable vs Comparator
+
+https://www.youtube.com/watch?v=ZA2oNhtNk3w
 
 - **`Comparable`**: Natural ordering within the class. Implement it when the sorting behavior is intrinsic to the class.
 
@@ -987,3 +990,29 @@ Use **`Comparator`** when you need to:
 - Override the default ordering behavior provided by **`Comparable`**.
 
 Example: Suppose you want to sort a list of **`Product`** objects by their price. Create a **`PriceComparator`** that compares products based on their prices.
+
+
+### What is Garbage Collection ?
+
+The process of automatically reclaiming unused memory by destroying unused objects.
+
+### What are memory leaks?
+
+Forgetting to destroy useless objects will eventually lead to what we call as “memory leaks” and that was very common in languages like C and C++, the programmer is responsible for both the creation and destruction of objects. So after a certain point memory won’t be available anymore to create new objects, and the entire application will terminate due to OutOfMemoryErrors
+
+In Java, Garbage collection happens automatically during the lifetime of a program, eliminating the need to de-allocate memory and therefore avoiding memory leaks.
+
+### When are objects sweeped through Garbage Collection?
+
+- Out of Scope- When exits the method
+- Having no reference-when the reference points to some other object
+- Referencing null-when the reference is set to null
+- By using anonymous object-myMethod(new BankAccount());
+
+### Basic Explanation - how garbage collector works in the background
+
+Young Generation Heap-All new object gets created here. Then Java at some point realises that it is starting to get somewhat full and applies mark and sweep, which means that java will check each of these items and see if there any references to them and then start marking them. Marks the one which has references and then does the sweep up of the unmarked ones to free more memory spaces for new objects to be created. Also Garbage Collector checks the time the objects are referenced for and if they are referenced for a longer time then they are moved from young to old generation of heap and this way is effficient as java is going to sweep and mark in the old generation way too slowly than in Young Generation because Old Generation has objects that have survived the previous rounds of Garbage Collection.
+
+1. Marking objects as Alive
+2. Sweeping Dead objects
+3. Compact Remaining objects- so that the objects are in contiguous blocks at the start of the heap. But this can be inefficient use of time and hence Generational Garbage Collection came into picture
